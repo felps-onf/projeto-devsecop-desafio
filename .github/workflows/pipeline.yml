@@ -46,6 +46,9 @@ jobs:
 
       - name: Configurar GitHub Pages
         uses: actions/configure-pages@v4
+        with:
+          enablement: github-pages
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload para Produção
         uses: actions/upload-pages-artifact@v3
