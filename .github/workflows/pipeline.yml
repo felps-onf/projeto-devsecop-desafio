@@ -1,4 +1,4 @@
-name: 🔐 Pipeline DevSecOps
+name: Pipeline DevSecOps
 
 on:
   push:
@@ -18,45 +18,39 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      # ✅ PASSO 1: Já está pronto — Baixar o código
-      - name: 📥 Checkout do Código
+      - name: Checkout do Código
         uses: actions/checkout@v4
 
-      # ✅ PASSO 2: Já está pronto — Build
-      - name: ⚙️ Build
+      - name: Build
         run: |
-          echo "Verificando arquivos..."
+          echo "Verificando arquivos"
           ls src/
           echo "Build OK!"
 
-      # ❌ PASSO 3: IMPLEMENTE AQUI — Secrets Scanning com Gitleaks
-      # Dica: use a action oficial "gitleaks/gitleaks-action@v2"
-      - name: 🔑 Secrets Scanning
-        run: echo "TODO - implemente o Secrets Scanning com Gitleaks aqui"
-        # SUBSTITUA o run acima pela implementação correta com "uses:"
+      - name: Secrets Scanning
+        uses: gitleaks/gitleaks-action@v2
+        with:
+          args: detect --source . --verbose
 
-      # ❌ PASSO 4: IMPLEMENTE AQUI — SAST com Semgrep
-      # Dica: instale com "pip install semgrep" e rode "semgrep scan --config auto --error src/"
-      - name: 🔍 SAST - Semgrep
-        run: echo "TODO - implemente o SAST com Semgrep aqui"
-        # SUBSTITUA pelo comando real: pip install semgrep && semgrep scan --config auto --error src/
+      - name: SAST - Semgrep
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install semgrep
+          semgrep scan --config auto --error src/
 
-      # ❌ PASSO 5: IMPLEMENTE AQUI — SCA com Grype
-      # Dica: instale com "curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin"
-      # e rode "grype dir:. --fail-on medium"
-      - name: 📦 SCA - Grype
-        run: echo "TODO - implemente o SCA com Grype aqui"
-        # SUBSTITUA pelo comando real de instalação + execução do Grype
+      - name: SCA - Grype
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+          grype dir:. --fail-on medium
 
-      # ✅ PASSO 6: Já está pronto — Deploy (só roda se tudo passar)
-      - name: 🌐 Configurar GitHub Pages
+      - name: Configurar GitHub Pages
         uses: actions/configure-pages@v4
 
-      - name: 📤 Upload para Produção
+      - name: Upload para Produção
         uses: actions/upload-pages-artifact@v3
         with:
           path: './src'
 
-      - name: 🚀 Deploy em Produção
+      - name: Deploy em Produção
         id: deployment
         uses: actions/deploy-pages@v4

@@ -1,6 +1,3 @@
-const API_KEY = "ghp_xK92mNpL34rTvQ87wZaB56cDeFgHiJkL";
-const DB_PASSWORD = "admin@prod#2024";
-
 // Busca tarefas do "banco de dados"
 fetch('db.json')
     .then(response => response.json())
@@ -9,12 +6,12 @@ fetch('db.json')
 
         const list = document.getElementById('task-list');
         data.itens.forEach(item => {
-            let li = document.createElement('li');
-            li.innerText = item.task;
+            const li = document.createElement('li');
+            li.textContent = item.task;
             list.appendChild(li);
         });
     })
-    .catch(err => {        
+    .catch(err => {
         document.getElementById('db-status').innerText =
             'Erro interno: ' + err.stack;
     });
@@ -23,10 +20,16 @@ fetch('db.json')
 function addTask() {
     const input = document.getElementById('new-task');
     const output = document.getElementById('output');
+    const value = input.value.trim();
 
-    output.innerHTML = '<li>' + input.value + '</li>';
+    if (!value) {
+        return;
+    }
 
-    eval('console.log("Tarefa adicionada: ' + input.value + '")');
+    const li = document.createElement('li');
+    li.textContent = value;
+    output.appendChild(li);
 
+    console.log('Tarefa adicionada:', value);
     input.value = '';
 }
